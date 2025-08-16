@@ -9,6 +9,7 @@ export const useAuthStore = defineStore('auth', {
     loading: false,
     error: null,
     tempToken: null,
+    initialized: false,
   }),
 
   getters: {
@@ -81,6 +82,8 @@ export const useAuthStore = defineStore('auth', {
       } finally {
         this.user = null
         this.isAuthenticated = false
+        this.initialized = false
+        this.tempToken = null
       }
     },
 
@@ -102,15 +105,20 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async fetchProfile() {
+      this.loading = true
       try {
         const response = await usersApi.getProfile()
         this.user = response.data.user
         this.isAuthenticated = true
+        this.initialized = true
         return response.data
       } catch (error) {
         this.user = null
         this.isAuthenticated = false
+        this.initialized = true
         throw error
+      } finally {
+        this.loading = false
       }
     },
 

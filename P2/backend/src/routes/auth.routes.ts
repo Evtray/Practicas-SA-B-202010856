@@ -2,14 +2,15 @@ import { Router } from 'express';
 import { AuthController } from '../controllers/auth.controller';
 import { GoogleAuthController } from '../controllers/googleAuth.controller';
 import { authMiddleware } from '../middlewares/auth.middleware';
-import { loginRateLimiter } from '../middlewares/rateLimiter.middleware';
+// import { loginRateLimiter } from '../middlewares/rateLimiter.middleware';
 
 const router = Router();
 
 // Public routes
 router.post('/register', AuthController.register);
 router.get('/verify-email', AuthController.verifyEmail);
-router.post('/login', loginRateLimiter, AuthController.login);
+// Rate limiter deshabilitado temporalmente
+router.post('/login', AuthController.login);
 router.post('/verify-2fa', AuthController.verify2FA);
 router.post('/refresh', AuthController.refreshToken);
 router.post('/resend-verification', AuthController.resendVerificationEmail);

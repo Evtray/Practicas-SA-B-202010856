@@ -53,22 +53,28 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  // Only try to fetch profile if route requires authentication
-  if (to.meta.requiresAuth && !authStore.user && !authStore.loading) {
-    try {
-      await authStore.fetchProfile()
-    } catch (error) {
-      // User is not authenticated, redirect to login
+  // Check if route requires authentication
+  if (to.meta.requiresAuth) {
+    // Only try to fetch profile once per session and only for protected routes
+    if (!authStore.initialized && !authStore.loading) {
+      try {
+        await authStore.fetchProfile()
+        // If successful, user is authenticated
+        return next()
+      } catch (error) {
+        // User is not authenticated, redirect to login
+        return next('/login')
+      }
+    }
+    
+    // If already initialized, check authentication status
+    if (!authStore.isAuthenticated) {
       return next('/login')
     }
   }
 
-  // Check if route requires authentication
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    return next('/login')
-  }
-
   // Check if route requires guest (not authenticated)
+  // Don't check profile for guest routes
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
     return next('/dashboard')
   }

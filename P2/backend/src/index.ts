@@ -4,7 +4,7 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import passport from 'passport';
 import { config } from './config/env';
-import { generalRateLimiter } from './middlewares/rateLimiter.middleware';
+// import { generalRateLimiter } from './middlewares/rateLimiter.middleware';
 import './config/passport'; // Initialize passport config
 
 const app = express();
@@ -26,8 +26,8 @@ app.use(cookieParser());
 // Passport middleware
 app.use(passport.initialize());
 
-// Rate limiting
-app.use('/api/', generalRateLimiter);
+// Rate limiting - DESHABILITADO TEMPORALMENTE
+// app.use('/api/', generalRateLimiter);
 
 // Health check endpoint
 app.get('/health', (_req, res) => {
