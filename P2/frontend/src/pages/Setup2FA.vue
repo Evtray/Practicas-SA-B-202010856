@@ -66,6 +66,30 @@
                 Ingresa el código de 6 dígitos de tu aplicación
               </p>
             </div>
+
+            <div v-if="backupCodes.length > 0" class="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+              <div class="flex items-center justify-between mb-3">
+                <h3 class="font-semibold text-yellow-800 dark:text-yellow-200">
+                  ⚠️ Códigos de Respaldo Importantes
+                </h3>
+                <Button @click="downloadBackupCodes" variant="outline" size="sm">
+                  Descargar
+                </Button>
+              </div>
+              <p class="text-sm text-yellow-700 dark:text-yellow-300 mb-4">
+                Guarda estos códigos en un lugar seguro. Cada uno puede usarse una sola vez para acceder a tu cuenta si pierdes tu dispositivo 2FA.
+              </p>
+              <div class="grid grid-cols-2 gap-2 mb-3">
+                <code v-for="code in backupCodes" :key="code" class="p-2 bg-white dark:bg-slate-800 rounded text-center font-mono text-sm border border-slate-200 dark:border-slate-700">
+                  {{ code }}
+                </code>
+              </div>
+              <div class="flex items-center gap-2">
+                <Button @click="copyBackupCodes" variant="outline" size="sm" class="flex-1">
+                  Copiar todos los códigos
+                </Button>
+              </div>
+            </div>
           </div>
         </Card>
       </div>
@@ -91,6 +115,7 @@ const loading = ref(false)
 const verifying = ref(false)
 const qrCodeUrl = ref('')
 const secret = ref('')
+const backupCodes = ref([])
 const verificationCode = ref('')
 
 const setup2FA = async () => {
@@ -99,6 +124,7 @@ const setup2FA = async () => {
     const response = await authStore.setup2FA()
     qrCodeUrl.value = response.qrCode
     secret.value = response.secret
+    backupCodes.value = response.backupCodes || []
     toast.success('Código QR generado correctamente')
   } catch (error) {
     toast.error('Error al generar el código QR')
@@ -115,7 +141,7 @@ const verify2FA = async () => {
 
   verifying.value = true
   try {
-    await authStore.verify2FA(verificationCode.value)
+    await authStore.confirm2FA(verificationCode.value)
     toast.success('¡2FA activado exitosamente!')
     router.push('/dashboard')
   } catch (error) {
@@ -128,5 +154,31 @@ const verify2FA = async () => {
 const copySecret = () => {
   navigator.clipboard.writeText(secret.value)
   toast.success('Código copiado al portapapeles')
+}
+
+const copyBackupCodes = () => {
+  const codesText = backupCodes.value.join('\n')
+  navigator.clipboard.writeText(codesText)
+  toast.success('Códigos de respaldo copiados al portapapeles')
+}
+
+const downloadBackupCodes = () => {
+  const codesText = `Códigos de Respaldo - 2FA\n` +
+    `Fecha: ${new Date().toLocaleString()}\n\n` +
+    `IMPORTANTE: Guarda estos códigos en un lugar seguro.\n` +
+    `Cada código puede usarse una sola vez.\n\n` +
+    backupCodes.value.join('\n')
+  
+  const blob = new Blob([codesText], { type: 'text/plain' })
+  const url = window.URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = `backup-codes-${new Date().getTime()}.txt`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  window.URL.revokeObjectURL(url)
+  
+  toast.success('Códigos de respaldo descargados')
 }
 </script>

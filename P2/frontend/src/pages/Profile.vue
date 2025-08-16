@@ -58,11 +58,11 @@
                 <div>
                   <p class="font-medium">Autenticación de Dos Factores</p>
                   <p class="text-sm text-slate-600 dark:text-slate-400">
-                    {{ user?.has2FA ? 'Protección adicional activada' : 'Aumenta la seguridad de tu cuenta' }}
+                    {{ (user?.has2FA || user?.twoFactorEnabled) ? 'Protección adicional activada' : 'Aumenta la seguridad de tu cuenta' }}
                   </p>
                 </div>
                 <Button
-                  v-if="!user?.has2FA"
+                  v-if="!(user?.has2FA || user?.twoFactorEnabled)"
                   @click="$router.push('/setup-2fa')"
                   variant="outline"
                   size="sm"

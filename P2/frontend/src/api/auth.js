@@ -1,23 +1,19 @@
 import api from './axios'
 
 export const authApi = {
-  register: (data) => api.post('/auth/register', data),
+  register: (data) => api.post('/api/auth/register', data),
   
-  login: (data) => api.post('/auth/login', data),
+  login: (data) => api.post('/api/auth/login', data),
   
-  logout: () => api.post('/auth/logout'),
+  logout: () => api.post('/api/auth/logout'),
   
-  verifyEmail: (token) => api.post('/auth/verify-email', { token }),
+  verifyEmail: (token) => api.get(`/api/auth/verify-email?token=${token}`),
   
-  resendVerificationEmail: (email) => api.post('/auth/resend-verification', { email }),
+  verify2FA: (tempToken, code) => api.post('/api/auth/verify-2fa', { tempToken, code }),
   
-  setup2FA: () => api.post('/auth/2fa/setup'),
+  setup2FA: () => api.post('/api/auth/setup-2fa'),
   
-  verify2FA: (code) => api.post('/auth/2fa/verify', { code }),
+  confirm2FA: (code) => api.post('/api/auth/confirm-2fa', { code }),
   
-  disable2FA: (code) => api.post('/auth/2fa/disable', { code }),
-  
-  refreshToken: () => api.post('/auth/refresh'),
-  
-  getProfile: () => api.get('/auth/profile'),
+  refreshToken: () => api.post('/api/auth/refresh'),
 }

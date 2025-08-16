@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { authApi } from '@/api/auth'
+import { usersApi } from '@/api/users'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -7,11 +8,12 @@ export const useAuthStore = defineStore('auth', {
     isAuthenticated: false,
     loading: false,
     error: null,
+    tempToken: null,
   }),
 
   getters: {
     isEmailVerified: (state) => state.user?.isEmailVerified || false,
-    has2FA: (state) => state.user?.has2FA || false,
+    has2FA: (state) => state.user?.has2FA || state.user?.twoFactorEnabled || false,
   },
 
   actions: {
@@ -34,11 +36,37 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         const response = await authApi.login(credentials)
+        
+        if (response.data.requiresTwoFactor) {
+          this.tempToken = response.data.tempToken
+          return response.data
+        }
+        
         this.user = response.data.user
         this.isAuthenticated = true
         return response.data
       } catch (error) {
         this.error = error.response?.data?.error || 'Login failed'
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async verify2FALogin(code) {
+      this.loading = true
+      this.error = null
+      try {
+        if (!this.tempToken) {
+          throw new Error('No temporary token available')
+        }
+        const response = await authApi.verify2FA(this.tempToken, code)
+        this.user = response.data.user
+        this.isAuthenticated = true
+        this.tempToken = null
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.error || '2FA verification failed'
         throw error
       } finally {
         this.loading = false
@@ -75,7 +103,7 @@ export const useAuthStore = defineStore('auth', {
 
     async fetchProfile() {
       try {
-        const response = await authApi.getProfile()
+        const response = await usersApi.getProfile()
         this.user = response.data.user
         this.isAuthenticated = true
         return response.data
@@ -100,17 +128,63 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    async verify2FA(code) {
+    async confirm2FA(code) {
       this.loading = true
       this.error = null
       try {
-        const response = await authApi.verify2FA(code)
+        const response = await authApi.confirm2FA(code)
         if (this.user) {
-          this.user.has2FA = true
+          this.user.twoFactorEnabled = true
         }
         return response.data
       } catch (error) {
-        this.error = error.response?.data?.error || '2FA verification failed'
+        this.error = error.response?.data?.error || '2FA confirmation failed'
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async updateProfile(data) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await usersApi.updateProfile(data)
+        this.user = response.data.user
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.error || 'Profile update failed'
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async changePassword(data) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await usersApi.changePassword(data)
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.error || 'Password change failed'
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async disable2FA(password) {
+      this.loading = true
+      this.error = null
+      try {
+        const response = await usersApi.disable2FA(password)
+        if (this.user) {
+          this.user.twoFactorEnabled = false
+        }
+        return response.data
+      } catch (error) {
+        this.error = error.response?.data?.error || '2FA disable failed'
         throw error
       } finally {
         this.loading = false

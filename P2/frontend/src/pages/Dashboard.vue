@@ -39,15 +39,15 @@
               </div>
               <div class="flex justify-between">
                 <span>2FA Activado:</span>
-                <span :class="user?.has2FA ? 'text-green-500' : 'text-slate-400'">
-                  {{ user?.has2FA ? '✓ Sí' : 'No' }}
+                <span :class="(user?.has2FA || user?.twoFactorEnabled) ? 'text-green-500' : 'text-slate-400'">
+                  {{ (user?.has2FA || user?.twoFactorEnabled) ? '✓ Sí' : 'No' }}
                 </span>
               </div>
             </div>
             
             <div class="mt-4">
               <Button 
-                v-if="!user?.has2FA"
+                v-if="!(user?.has2FA || user?.twoFactorEnabled)"
                 @click="$router.push('/setup-2fa')"
                 variant="outline"
                 size="sm"

@@ -53,12 +53,13 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  // Try to get user profile if not already loaded
-  if (!authStore.user && !authStore.loading) {
+  // Only try to fetch profile if route requires authentication
+  if (to.meta.requiresAuth && !authStore.user && !authStore.loading) {
     try {
       await authStore.fetchProfile()
     } catch (error) {
-      // User is not authenticated
+      // User is not authenticated, redirect to login
+      return next('/login')
     }
   }
 

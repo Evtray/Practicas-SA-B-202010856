@@ -9,9 +9,6 @@ import { Product } from '../models/Product';
 export class ProductRepository implements IRepository<IProduct> {
   private productos: IProduct[] = [];
 
-  /**
-   * Agrega un producto al repositorio
-   */
   agregar(producto: IProduct): void {
     const productoExistente = this.buscar(p => p.nombre.toLowerCase() === producto.nombre.toLowerCase());
     if (productoExistente) {
@@ -20,9 +17,6 @@ export class ProductRepository implements IRepository<IProduct> {
     this.productos.push(new Product(producto.nombre, producto.cantidad, producto.precio));
   }
 
-  /**
-   * Elimina un producto basado en un criterio
-   */
   eliminar(criterio: (producto: IProduct) => boolean): boolean {
     const indice = this.productos.findIndex(criterio);
     if (indice !== -1) {

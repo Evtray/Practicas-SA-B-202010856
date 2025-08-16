@@ -27,6 +27,8 @@ export const config = {
     user: process.env.EMAIL_USER || '',
     pass: process.env.EMAIL_PASS || '',
     from: process.env.EMAIL_FROM || 'noreply@app.com',
+    fromName: process.env.EMAIL_FROM_NAME || 'Auth System',
+    secure: process.env.EMAIL_PORT === '465', // true for 465, false for other ports
   },
   
   frontend: {
@@ -40,5 +42,11 @@ export const config = {
   
   twoFA: {
     appName: process.env.TWO_FA_APP_NAME || 'AuthApp',
+  },
+  
+  google: {
+    clientId: process.env.GOOGLE_CLIENT_ID || '',
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+    callbackUrl: process.env.GOOGLE_CALLBACK_URL || 'http://localhost:3000/api/auth/google/callback',
   },
 };

@@ -24,7 +24,7 @@ export const authMiddleware = async (
             sameSite: 'strict',
             maxAge: 15 * 60 * 1000, // 15 minutes
           });
-          req.user = decoded;
+          (req as any).user = decoded;
           return next();
         }
       }
@@ -32,7 +32,7 @@ export const authMiddleware = async (
     }
 
     const decoded = JWTService.verifyToken(token);
-    req.user = decoded;
+    (req as any).user = decoded;
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Invalid token' });
