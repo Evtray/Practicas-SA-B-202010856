@@ -1,7 +1,7 @@
 # Práctica 2 - Sistema de Autenticación y Autorización
 
 **Curso:** Software Avanzado  
-**Estudiante:** Evelyn Astrid Trabanino Lopez  
+**Estudiante:** Edwin Sandoval 
 **Carné:** 202010856  
 **Sección:** B  
 
@@ -454,18 +454,3 @@ npm run prisma:studio
    - Logs centralizados
    - Alertas de seguridad
    - Rate limiting en API Gateway
-
-## 📝 Licencia
-
-Este proyecto fue desarrollado como parte del curso de Software Avanzado de la Universidad de San Carlos de Guatemala.
-
-## 👥 Contacto
-
-**Estudiante:** Evelyn Astrid Trabanino Lopez  
-**Carné:** 202010856  
-**Sección:** B  
-**Auxiliar:** di3gini
-
----
-
-*Última actualización: 16 de Agosto de 2025*
