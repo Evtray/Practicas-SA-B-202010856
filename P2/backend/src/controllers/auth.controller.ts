@@ -41,13 +41,17 @@ export class AuthController {
 
   static async login(req: Request, res: Response): Promise<Response> {
     try {
+      console.log('📥 Login request received:', { email: req.body.email });
       const { email, password } = req.body;
 
       if (!email || !password) {
+        console.log('❌ Missing credentials');
         return res.status(400).json({ error: 'Email and password are required' });
       }
 
+      console.log('🔐 Attempting login for:', email);
       const result = await AuthService.login(email, password);
+      console.log('✅ Login successful for:', email);
 
       if (result.requiresTwoFactor) {
         // Return temp token for 2FA verification
@@ -80,15 +84,24 @@ export class AuthController {
         requiresTwoFactor: false,
       });
     } catch (error: any) {
+      console.error('❌ Login error:', error.message);
+      console.error('Stack trace:', error.stack);
       return res.status(401).json({ error: error.message });
     }
   }
 
   static async verify2FA(req: Request, res: Response): Promise<Response> {
     try {
+      console.log('🔐 2FA verification request received:', { 
+        hasTempToken: !!req.body.tempToken,
+        hasUserId: !!req.body.userId, 
+        hasCode: !!req.body.code,
+        body: req.body 
+      });
       const { tempToken, userId, code } = req.body;
 
       if (!tempToken || !userId || !code) {
+        console.log('❌ Missing required fields for 2FA:', { tempToken: !!tempToken, userId: !!userId, code: !!code });
         return res.status(400).json({ error: 'Temp token, user ID and code are required' });
       }
 

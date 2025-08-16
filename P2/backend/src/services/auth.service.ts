@@ -82,24 +82,30 @@ export class AuthService {
   }
 
   static async login(email: string, password: string) {
+    console.log('🔍 Looking for user with email:', email);
     const user = await prisma.user.findUnique({
       where: { email },
     });
 
     if (!user) {
+      console.log('❌ User not found with email:', email);
       throw new Error('Invalid credentials');
     }
+    console.log('✅ User found:', { id: user.id, email: user.email });
 
     // Check if account is locked
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       const remainingTime = Math.ceil((user.lockedUntil.getTime() - Date.now()) / 60000);
+      console.log('🔒 Account is locked until:', user.lockedUntil);
       throw new Error(`Account is locked. Try again in ${remainingTime} minutes`);
     }
 
     // Verify password
+    console.log('🔑 Verifying password...');
     const isPasswordValid = await bcrypt.compare(password, user.password);
     
     if (!isPasswordValid) {
+      console.log('❌ Invalid password for user:', email);
       // Increment login attempts
       const attempts = user.loginAttempts + 1;
       const maxAttempts = config.rateLimit.maxLoginAttempts;
@@ -114,20 +120,25 @@ export class AuthService {
             lockedUntil: new Date(Date.now() + lockoutTime),
           },
         });
+        console.log('🔒 Account locked due to too many attempts');
         throw new Error(`Account locked due to too many failed attempts. Try again in ${config.rateLimit.lockoutTime} minutes`);
       } else {
         await prisma.user.update({
           where: { id: user.id },
           data: { loginAttempts: attempts },
         });
+        console.log(`⚠️ Login attempt ${attempts}/${maxAttempts}`);
         throw new Error('Invalid credentials');
       }
     }
+    console.log('✅ Password is valid');
 
     // Check if email is verified
     if (!user.isEmailVerified) {
+      console.log('❌ Email not verified for user:', email);
       throw new Error('Please verify your email before logging in');
     }
+    console.log('✅ Email is verified');
 
     // Reset login attempts on successful login
     await prisma.user.update({
@@ -144,9 +155,11 @@ export class AuthService {
 
     // Check if 2FA is enabled
     if (user.twoFactorEnabled) {
+      console.log('🔐 2FA is enabled for user, generating temp token...');
       // Generate temporary token for 2FA verification
       const tempToken = crypto.randomBytes(32).toString('hex');
       
+      console.log('📝 Returning 2FA challenge with tempToken');
       // Store temp token in memory or cache (for simplicity, we'll return it)
       return {
         requiresTwoFactor: true,

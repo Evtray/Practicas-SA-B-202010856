@@ -74,7 +74,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // Check if route requires guest (not authenticated)
-  // Don't check profile for guest routes
+  // Don't fetch profile for guest routes - only check if already authenticated
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
     return next('/dashboard')
   }
