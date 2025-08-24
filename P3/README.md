@@ -56,6 +56,12 @@ Migración a **arquitectura de microservicios** con servicios independientes y e
 
 ![Arquitectura Propuesta](./diagrams/arq_pro.png)
 
+### Arquitectura de Componentes
+![Diagrama de Componentes](./diagrams/diagrama_de_compoenntes.png)
+
+### Comunicación entre Microservicios
+![Comunicación entre Microservicios](./diagrams/diagrama_comunicacion_entre_microservicios.png)
+
 ### Patrones de Microservicios Implementados
 
 ![Patrones de Microservicios](./diagrams/microservices_patterns.png)
@@ -74,6 +80,9 @@ Migración a **arquitectura de microservicios** con servicios independientes y e
 ### Reglas de Validación Implementadas
 
 #### Validación de Archivos Financieros CSV:
+
+![Proceso de Validación](./diagrams/proceso_validacion_csv.png)
+
 1. **Validación de Montos**
    - Verificación contra presupuestos aprobados
    - Límites por tipo de transacción
@@ -90,6 +99,9 @@ Migración a **arquitectura de microservicios** con servicios independientes y e
    - Cuentas contables activas
 
 #### Proceso de Aprobación de 3 Niveles:
+
+![Flujo de Aprobación Detallado](./diagrams/flujo_aprobacion_3_niveles.png)
+
 1. **Nivel 1 - Asistente Financiero**
    - Revisión de datos básicos
    - Adjunta comentarios si es necesario
@@ -233,6 +245,13 @@ Migración a **arquitectura de microservicios** con servicios independientes y e
 
 ### Flujo de Proceso Completo
 
+#### Proceso de Validación de Archivos CSV
+![Proceso de Validación CSV](./diagrams/proceso_validacion_csv.png)
+
+#### Flujo de Aprobación de 3 Niveles
+![Flujo de Aprobación](./diagrams/flujo_aprobacion_3_niveles.png)
+
+#### Diagrama de Secuencia - Proceso Completo
 ![Proceso Completo - Diagrama de Secuencia](./diagrams/proceso_completo_secuencia.png)
 
 ---
