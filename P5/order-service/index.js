@@ -318,8 +318,17 @@ async function startServer() {
   });
   app.use(limiter);
 
-  // Health check endpoint
+  // Health check endpoints
   app.get('/health', (req, res) => {
+    res.json({
+      service: 'order-service',
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      version: '1.0.0'
+    });
+  });
+
+  app.get('/api/orders/health', (req, res) => {
     res.json({
       service: 'order-service',
       status: 'healthy',
@@ -341,6 +350,9 @@ async function startServer() {
 
   await server.start();
   server.applyMiddleware({ app, path: '/graphql' });
+
+  // Also expose GraphQL at /api/orders/graphql for consistency with API Gateway
+  server.applyMiddleware({ app, path: '/api/orders/graphql' });
 
   // Error handling middleware
   app.use((err, req, res, next) => {
