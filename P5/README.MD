@@ -3,8 +3,8 @@
 **Universidad San Carlos de Guatemala**
 **Facultad de Ingeniería**
 **Software Avanzado - Práctica 5**
-**Estudiante:** Evelyn Alejandra Tray Gálvez
-**Carné:** 202010856
+**Estudiante**: Edwin Sandoval Lopez
+**Carné**: 202010856
 
 ## 📋 Descripción del Proyecto
 
@@ -722,14 +722,3 @@ pip install -r requirements.txt
 - ✅ **Error handling**: Manejo consistente de errores
 - ✅ **Logging**: Sistema de logs implementado
 - ✅ **Health checks**: Monitoreo de estado de servicios
-
-## 🤝 Información del Proyecto
-
-### 📝 Detalles Académicos
-- **Universidad**: San Carlos de Guatemala
-- **Facultad**: Ingeniería
-- **Curso**: Software Avanzado - Sección B
-- **Práctica**: #5 - Microservicios y Docker
-- **Estudiante**: Evelyn Alejandra Tray Gálvez
-- **Carné**: 202010856
-- **Período**: 2025
