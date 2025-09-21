@@ -24,7 +24,7 @@
     "jest": "^29.6.1"
   },
   "engines": {
-    "node": ">=18.0.0"2
+    "node": ">=18.0.0"
   },
   "keywords": ["microservice", "user", "authentication", "express"],
   "author": "",

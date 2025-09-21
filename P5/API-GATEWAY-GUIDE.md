@@ -54,20 +54,30 @@ curl http://localhost:3000/
 ## 📦 Endpoints REST por Servicio
 
 ### User Service (Puerto directo: 3001)
+**Nota**: Por problemas con el proxy en peticiones POST, usar directamente el puerto 3001 para operaciones de escritura
 
 #### Obtener todos los usuarios
 ```bash
+# A través del gateway (funciona)
 curl http://localhost:3000/api/users
+
+# Directo al servicio
+curl http://localhost:3001/api/users
 ```
 
 #### Obtener usuario por ID
 ```bash
+# A través del gateway (funciona)
 curl http://localhost:3000/api/users/1
+
+# Directo al servicio
+curl http://localhost:3001/api/users/1
 ```
 
 #### Registrar nuevo usuario
 ```bash
-curl -X POST http://localhost:3000/api/users/register \
+# Usar directamente el servicio (recomendado)
+curl -X POST http://localhost:3001/api/users/register \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Doe",
@@ -78,7 +88,8 @@ curl -X POST http://localhost:3000/api/users/register \
 
 #### Login de usuario
 ```bash
-curl -X POST http://localhost:3000/api/users/login \
+# Usar directamente el servicio (recomendado)
+curl -X POST http://localhost:3001/api/users/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "john@example.com",
@@ -88,7 +99,8 @@ curl -X POST http://localhost:3000/api/users/login \
 
 #### Actualizar usuario
 ```bash
-curl -X PUT http://localhost:3000/api/users/1 \
+# Usar directamente el servicio (recomendado)
+curl -X PUT http://localhost:3001/api/users/1 \
   -H "Content-Type: application/json" \
   -d '{
     "name": "John Updated",
@@ -98,29 +110,43 @@ curl -X PUT http://localhost:3000/api/users/1 \
 
 #### Eliminar usuario
 ```bash
-curl -X DELETE http://localhost:3000/api/users/1
+# A través del gateway o directo
+curl -X DELETE http://localhost:3001/api/users/1
 ```
 
 ### Product Service (Puerto directo: 8001)
 
 #### Obtener todos los productos
 ```bash
+# A través del gateway (funciona)
 curl http://localhost:3000/api/products
+
+# Directo al servicio
+curl http://localhost:8001/api/products
 ```
 
 #### Obtener producto por ID
 ```bash
+# A través del gateway (funciona)
 curl http://localhost:3000/api/products/1
+
+# Directo al servicio
+curl http://localhost:8001/api/products/1
 ```
 
 #### Obtener productos por categoría
 ```bash
+# A través del gateway (funciona)
 curl http://localhost:3000/api/products/category/electronics
+
+# Directo al servicio
+curl http://localhost:8001/api/products/category/electronics
 ```
 
 #### Crear nuevo producto
 ```bash
-curl -X POST http://localhost:3000/api/products \
+# Usar directamente el servicio (recomendado)
+curl -X POST http://localhost:8001/api/products \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Laptop Pro",

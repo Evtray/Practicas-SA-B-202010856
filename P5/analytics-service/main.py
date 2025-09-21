@@ -10,7 +10,7 @@ import asyncio
 from collections import defaultdict
 import graphene
 from graphene import ObjectType, String, Int, Float, List as GrapheneList, Field, Schema, Mutation
-from graphql import execute
+from graphql import graphql_sync
 import json
 
 # Environment variables
@@ -345,12 +345,12 @@ async def graphql_endpoint(request: Request):
         query = body.get("query")
         variables = body.get("variables", {})
 
-        result = execute(schema.graphql_schema, query, variable_values=variables)
+        result = schema.execute(query, variable_values=variables)
 
-        return {
-            "data": result.data,
-            "errors": [str(error) for error in result.errors] if result.errors else None
-        }
+        if result.errors:
+            return {"errors": [str(error) for error in result.errors]}
+
+        return {"data": result.data}
     except Exception as e:
         return {"errors": [str(e)]}
 

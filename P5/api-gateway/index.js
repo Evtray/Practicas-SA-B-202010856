@@ -21,9 +21,6 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
-// Body parsing
-app.use(express.json());
-
 // Service configuration
 const services = {
   users: {
@@ -118,6 +115,10 @@ const authMiddleware = (req, res, next) => {
   next();
 };
 
+// Body parsing - needed for proxying POST requests
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // Apply auth middleware to protected routes (optional, can be removed for testing)
 // app.use(authMiddleware);
 
@@ -125,14 +126,17 @@ const authMiddleware = (req, res, next) => {
 const createProxyOptions = (target) => ({
   target,
   changeOrigin: true,
+  selfHandleResponse: false,
   onError: (err, req, res) => {
     console.error(`Proxy error for ${target}:`, err.message);
-    res.status(502).json({
-      success: false,
-      error: 'Service unavailable',
-      service: target,
-      message: process.env.NODE_ENV === 'development' ? err.message : 'Internal service error'
-    });
+    if (!res.headersSent) {
+      res.status(502).json({
+        success: false,
+        error: 'Service unavailable',
+        service: target,
+        message: process.env.NODE_ENV === 'development' ? err.message : 'Internal service error'
+      });
+    }
   },
   onProxyReq: (proxyReq, req, res) => {
     // Forward user context if available
@@ -140,6 +144,14 @@ const createProxyOptions = (target) => ({
       proxyReq.setHeader('X-User-Id', req.user.id);
       proxyReq.setHeader('X-User-Email', req.user.email);
       proxyReq.setHeader('X-User-Role', req.user.role);
+    }
+
+    // Fix body for POST/PUT requests
+    if (req.body && (req.method === 'POST' || req.method === 'PUT' || req.method === 'PATCH')) {
+      const bodyData = JSON.stringify(req.body);
+      proxyReq.setHeader('Content-Type', 'application/json');
+      proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData));
+      proxyReq.write(bodyData);
     }
   },
   logLevel: process.env.NODE_ENV === 'development' ? 'debug' : 'error'
@@ -181,6 +193,7 @@ app.use('/analytics/graphql', createProxyMiddleware({
   ...createProxyOptions(services.analytics.url),
   pathRewrite: { '^/analytics/graphql': '/graphql' }
 }));
+
 
 // Combined GraphQL endpoint (optional - federates both GraphQL services)
 app.post('/graphql', async (req, res) => {
